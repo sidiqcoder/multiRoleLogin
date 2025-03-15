@@ -22,7 +22,7 @@ export const getOneUser = async (req, res) => {
     });
     res.status(StatusCodes.OK).json(response);
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.messsage });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
   }
 };
 export const createUser = async (req, res) => {
@@ -44,5 +44,29 @@ export const createUser = async (req, res) => {
     res.status(StatusCodes.BAD_REQUEST).json({ msg: error.messsage });
   }
 };
-export const updateUser = (req, res) => {};
+
+export const updateUser = async (req, res) => {
+    const { nama, email, role } = req.body;
+    try {
+        const user = await User.findOne({
+            where: {
+                uuid: req.params.id,
+            },
+        });
+
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND).json({ msg: "User not found" });
+        }
+
+        await User.update(
+            { name: nama, email: email, role: role },
+            { where: { uuid: req.params.id } }
+        );
+
+        res.status(StatusCodes.OK).json({ msg: "User updated successfully" });
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+};
+
 export const deleteUser = (req, res) => {};
